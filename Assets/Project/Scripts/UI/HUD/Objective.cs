@@ -1,4 +1,3 @@
-using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -35,6 +34,10 @@ namespace Project.Scripts.UI.HUD
                 number.text = $"x{counter}";
             else
                 signalBus.Fire(new Signals.OnObjectiveComplete { color = color });
+        }
+        
+        public class Factory : PlaceholderFactory<Color, Objective>
+        {
         }
     }
 }
