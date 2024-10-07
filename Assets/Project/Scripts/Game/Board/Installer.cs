@@ -9,7 +9,7 @@ namespace Project.Scripts.Game.Board
 
         public override void InstallBindings()
         {
-            Container.BindFactory<Cell, Cell.Factory>().FromComponentInNewPrefab(cell).AsSingle();
+            Container.BindFactory<Gem, Cell, Cell.Factory>().FromComponentInNewPrefab(cell).AsSingle();
         }
     }
 }

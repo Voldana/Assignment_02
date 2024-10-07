@@ -16,7 +16,13 @@ namespace Project.Scripts.Game.Board
         private void CreateBoard()
         {
             for (var i = 0; i < levelSetting.height * levelSetting.width; i++)
-                factory.Create().transform.SetParent(transform);
+                factory.Create(AssignRandomGem()).transform.SetParent(transform);
+            
+            Gem AssignRandomGem()
+            {
+                var number = Random.Range(0, 5);
+                return levelSetting.gems[number];
+            }
         }
     }
 }
