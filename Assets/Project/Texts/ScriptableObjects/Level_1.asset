@@ -12,12 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 43f9925065cb11041ae94cf4db61ead1, type: 3}
   m_Name: Level_1
   m_EditorClassIdentifier: 
-  colors:
-  - {r: 1, g: 0.942582, b: 0, a: 1}
-  - {r: 0, g: 1, b: 0.031828642, a: 1}
-  - {r: 0, g: 0.62420106, b: 1, a: 1}
-  - {r: 0.78532076, g: 0, b: 1, a: 1}
-  - {r: 1, g: 0, b: 0, a: 1}
+  gems:
+  - sprite: {fileID: 21300000, guid: 8bf9bacd3707250449b93f90a9a0e539, type: 3}
+    type: 0
+  - sprite: {fileID: 21300000, guid: c72b850508c7d8f4781072c0ba5fb648, type: 3}
+    type: 1
+  - sprite: {fileID: 21300000, guid: 18cf8f84d0f9fc14b97225c4a3c22ef5, type: 3}
+    type: 2
+  - sprite: {fileID: 21300000, guid: 99e51cbfd480b80458e00916d7cbcd87, type: 3}
+    type: 3
+  - sprite: {fileID: 21300000, guid: 93a5bc3a93a16004bb8bf31555cfc895, type: 3}
+    type: 4
   height: 8
   width: 8
   moves: 10

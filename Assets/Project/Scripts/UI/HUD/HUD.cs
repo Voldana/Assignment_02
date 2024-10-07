@@ -30,7 +30,7 @@ namespace Project.Scripts.UI.HUD
 
         private void CreateObjectives()
         {
-            foreach (var color in levelSetting.colors)
+            foreach (var color in levelSetting.gems)
                 factory.Create(color).transform.SetParent(objectives);
         }
 

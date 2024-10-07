@@ -1,3 +1,4 @@
+using Project.Scripts.Game;
 using UnityEngine;
 
 namespace Project.Scripts
@@ -6,7 +7,7 @@ namespace Project.Scripts
     {
         public struct OnMatch
         {
-            public Color color;
+            public Type type;
         }
 
         public struct OnMove
@@ -15,7 +16,7 @@ namespace Project.Scripts
 
         public struct OnObjectiveComplete
         {
-            public Color color;
+            public Type type;
         }
     }
 }

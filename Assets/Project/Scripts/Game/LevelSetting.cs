@@ -8,10 +8,26 @@ namespace Project.Scripts.Game
     [Serializable]
     public class LevelSetting : ScriptableObject
     {
-        public List<Color> colors;
+        public List<Gem> gems;
         public int height;
         public int width;
         public int moves;
         public int time;
+    }
+
+    [Serializable]
+    public class Gem
+    {
+        public Sprite sprite;
+        public Type type;
+    }
+
+    public enum Type
+    {
+        Yellow,
+        Purple,
+        Green,
+        Blue,
+        Red
     }
 }

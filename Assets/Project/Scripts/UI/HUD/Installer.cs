@@ -11,7 +11,7 @@ namespace Project.Scripts.UI.HUD
         public override void InstallBindings()
         {
             SignalBusInstaller.Install(Container);
-            Container.BindFactory<Color, Objective, Objective.Factory>().FromComponentInNewPrefab(objective).AsSingle();
+            Container.BindFactory<Gem, Objective, Objective.Factory>().FromComponentInNewPrefab(objective).AsSingle();
         }
     }
 }

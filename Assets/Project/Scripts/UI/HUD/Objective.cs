@@ -1,3 +1,4 @@
+using Project.Scripts.Game;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,7 +12,7 @@ namespace Project.Scripts.UI.HUD
         [SerializeField] private Image icon;
 
         [Inject] private SignalBus signalBus;
-        [Inject] private Color color;
+        [Inject] private Gem gem;
 
         private int counter = 3;
 
@@ -23,20 +24,20 @@ namespace Project.Scripts.UI.HUD
 
         private void SetColor()
         {
-            icon.color = color;
+            icon.sprite = gem.sprite;
         }
 
         private void OnMatchMade(Signals.OnMatch signal)
         {
-            if (!signal.color.Equals(color) || counter <= 0) return;
+            if (!signal.type.Equals(gem.type) || counter <= 0) return;
             counter--;
             if (counter != 0)
                 number.text = $"x{counter}";
             else
-                signalBus.Fire(new Signals.OnObjectiveComplete { color = color });
+                signalBus.Fire(new Signals.OnObjectiveComplete { type = gem.type });
         }
         
-        public class Factory : PlaceholderFactory<Color, Objective>
+        public class Factory : PlaceholderFactory<Gem, Objective>
         {
         }
     }
