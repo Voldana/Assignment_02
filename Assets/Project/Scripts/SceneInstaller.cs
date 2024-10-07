@@ -11,6 +11,10 @@ namespace Project.Scripts
         public override void InstallBindings()
         {
             Container.BindInstance(levelSetting).AsSingle();
+            
+            Container.DeclareSignal<Signals.OnObjectiveComplete>();
+            Container.DeclareSignal<Signals.OnMatch>();
+            Container.DeclareSignal<Signals.OnMove>();
         }
     }
 }

@@ -9,6 +9,8 @@ namespace Project.Scripts.Game
     public class LevelSetting : ScriptableObject
     {
         public List<Color> colors;
+        public int height;
+        public int width;
         public int moves;
         public int time;
     }
