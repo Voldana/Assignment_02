@@ -18,5 +18,7 @@ MonoBehaviour:
   - {r: 0, g: 0.62420106, b: 1, a: 1}
   - {r: 0.78532076, g: 0, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
-  moves: 15
+  height: 8
+  width: 8
+  moves: 10
   time: 20

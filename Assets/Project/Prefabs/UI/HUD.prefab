@@ -181,6 +181,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   objectives: {fileID: 8203567275367833952}
+  clock: {fileID: 4337672051938455416}
+  moves: {fileID: 4919796697666259676}
 --- !u!1 &1052654335033882075
 GameObject:
   m_ObjectHideFlags: 0
