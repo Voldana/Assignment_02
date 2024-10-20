@@ -12,6 +12,7 @@ namespace Project.Scripts.Game.Board
     {
         [Inject] private LevelSetting levelSetting;
         [Inject] private Gem.Factory factory;
+        [Inject] private SignalBus signalBus;
 
         private readonly Vector3 originPosition = new(-.5f, -1.3f, 0);
         private const float CellSize = 1f;
@@ -19,12 +20,12 @@ namespace Project.Scripts.Game.Board
         [SerializeField] private Ease ease = Ease.InQuad;
         [SerializeField] private GameObject explosion;
 
-        InputReader inputReader;
+        private InputReader inputReader;
         // AudioManager audioManager;
 
-        Grid<GridObject<Gem>> grid;
+        private Grid<GridObject<Gem>> grid;
 
-        Vector2Int selectedGem = Vector2Int.one * -1;
+        private Vector2Int selectedGem = Vector2Int.one * -1;
 
         void Awake()
         {
@@ -36,6 +37,7 @@ namespace Project.Scripts.Game.Board
         {
             InitializeGrid();
             inputReader.Fire += OnSelectGem;
+            StartCoroutine(CheckMatches());
         }
 
         private void OnDestroy()
@@ -70,21 +72,35 @@ namespace Project.Scripts.Game.Board
             yield return StartCoroutine(SwapGems(gridPosA, gridPosB));
 
             // Matches?
-            List<Vector2Int> matches = FindMatches();
-            // TODO: Calculate score
-            // Make Gems explode
-            yield return StartCoroutine(ExplodeGems(matches));
-            // Make gems fall
-            yield return StartCoroutine(MakeGemsFall());
-            // Fill empty spots
-            yield return StartCoroutine(FillEmptySpots());
+            yield return CheckMatches();
+            // List<Vector2Int> matches = FindMatches();
+            // // TODO: Calculate score
+            // // Make Gems explode
+            // yield return StartCoroutine(ExplodeGems(matches));
+            // // Make gems fall
+            // yield return StartCoroutine(MakeGemsFall());
+            // // Fill empty spots
+            // yield return StartCoroutine(FillEmptySpots());
+
 
             // TODO: Check if game is over
 
             DeselectGem();
         }
 
-        IEnumerator FillEmptySpots()
+        private IEnumerator CheckMatches()
+        {
+            var matches = FindMatches();
+            if (matches.Count == 0)
+                yield break;
+            // TODO: Calculate score
+            yield return StartCoroutine(ExplodeGems(matches));
+            yield return StartCoroutine(MakeGemsFall());
+            yield return StartCoroutine(FillEmptySpots());
+            StartCoroutine(CheckMatches());
+        }
+
+        private IEnumerator FillEmptySpots()
         {
             for (var x = 0; x < levelSetting.width; x++)
             {
@@ -205,7 +221,7 @@ namespace Project.Scripts.Game.Board
             return new List<Vector2Int>(matches);
         }
 
-        IEnumerator SwapGems(Vector2Int gridPosA, Vector2Int gridPosB)
+        private IEnumerator SwapGems(Vector2Int gridPosA, Vector2Int gridPosB)
         {
             var gridObjectA = grid.GetValue(gridPosA.x, gridPosA.y);
             var gridObjectB = grid.GetValue(gridPosB.x, gridPosB.y);
