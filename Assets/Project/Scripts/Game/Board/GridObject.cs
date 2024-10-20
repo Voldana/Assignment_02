@@ -1,6 +1,4 @@
-﻿using Project.Scripts.Game.Board;
-
-namespace Match3
+﻿namespace Project.Scripts.Game.Board
 {
     public class GridObject<T>
     {

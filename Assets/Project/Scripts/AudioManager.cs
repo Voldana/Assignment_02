@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Match3 {
+namespace Project.Scripts {
     [RequireComponent(typeof(AudioSource))]
     public class AudioManager : MonoBehaviour {
         [SerializeField] private AudioClip click;

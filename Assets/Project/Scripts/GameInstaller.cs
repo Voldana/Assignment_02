@@ -7,7 +7,6 @@ namespace Project.Scripts
         public override void InstallBindings()
         {
             SignalBusInstaller.Install(Container);
-
         }
     }
 }
