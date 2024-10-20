@@ -2,30 +2,31 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace Match3 {
+namespace Project.Scripts.Game {
     [RequireComponent(typeof(PlayerInput))]
     public class InputReader : MonoBehaviour {
-        PlayerInput playerInput;
-        InputAction selectAction;
-        InputAction fireAction;
+        
+        private PlayerInput playerInput;
+        private InputAction selectAction;
+        private InputAction fireAction;
         
 
         public event Action Fire;
 
         public Vector2 Selected => selectAction.ReadValue<Vector2>();
-        
-        void Start() {
+
+        private void Start() {
             playerInput = GetComponent<PlayerInput>();
             selectAction = playerInput.actions["Select"];
             fireAction = playerInput.actions["Fire"];
             
             fireAction.performed += OnFire;
         }
-        
-        void OnDestroy() {
+
+        private void OnDestroy() {
             fireAction.performed -= OnFire;
         }
 
-        void OnFire(InputAction.CallbackContext obj) => Fire?.Invoke();
+        private void OnFire(InputAction.CallbackContext obj) => Fire?.Invoke();
     }
 }

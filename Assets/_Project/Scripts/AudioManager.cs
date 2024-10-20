@@ -3,16 +3,16 @@
 namespace Match3 {
     [RequireComponent(typeof(AudioSource))]
     public class AudioManager : MonoBehaviour {
-        [SerializeField] AudioClip click;
-        [SerializeField] AudioClip deselect;
-        [SerializeField] AudioClip match;
-        [SerializeField] AudioClip noMatch;
-        [SerializeField] AudioClip woosh;
-        [SerializeField] AudioClip pop;
-        
-        AudioSource audioSource;
-        
-        void OnValidate() {
+        [SerializeField] private AudioClip click;
+        [SerializeField] private AudioClip deselect;
+        [SerializeField] private AudioClip match;
+        [SerializeField] private AudioClip noMatch;
+        [SerializeField] private AudioClip woosh;
+        [SerializeField] private AudioClip pop;
+
+        private AudioSource audioSource;
+
+        private void OnValidate() {
             if (audioSource == null) audioSource = GetComponent<AudioSource>();
         }
 
@@ -23,7 +23,7 @@ namespace Match3 {
         public void PlayWoosh() => PlayRandomPitch(woosh);
         public void PlayPop() => PlayRandomPitch(pop);
 
-        void PlayRandomPitch(AudioClip audioClip) {
+        private void PlayRandomPitch(AudioClip audioClip) {
             audioSource.pitch = Random.Range(0.9f, 1.1f);
             audioSource.PlayOneShot(audioClip);
             audioSource.pitch = 1f;

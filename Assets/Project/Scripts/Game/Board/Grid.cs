@@ -16,16 +16,9 @@ namespace Project.Scripts.Game.Board
 
         public event Action<int, int, T> OnValueChangeEvent;
 
-        public static Grid<T> VerticalGrid(LevelSetting setting, float cellSize, Vector3 origin,
-            bool debug = false)
+        public static Grid<T> VerticalGrid(LevelSetting setting, float cellSize, Vector3 origin)
         {
             return new Grid<T>(setting, cellSize, origin, new VerticalConverter());
-        }
-
-        public Grid<T> HorizontalGrid(LevelSetting setting, float cellSize, Vector3 origin,
-            bool debug = false)
-        {
-            return new Grid<T>(setting, cellSize, origin, new HorizontalConverter());
         }
 
         [Inject]
@@ -75,7 +68,7 @@ namespace Project.Scripts.Game.Board
             coordinateConverter.GridToWorldCenter(x, y, cellSize, origin);
 
         Vector3 GetWorldPosition(int x, int y) => coordinateConverter.GridToWorld(x, y, cellSize, origin);
-        
+
         public abstract class CoordinateConverter
         {
             public abstract Vector3 GridToWorld(int x, int y, float cellSize, Vector3 origin);

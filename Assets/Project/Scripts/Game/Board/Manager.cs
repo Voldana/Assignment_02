@@ -17,8 +17,8 @@ namespace Project.Scripts.Game.Board
         private readonly Vector3 originPosition = new(-.5f, -1.3f, 0);
         private const float CellSize = 1f;
 
-        [SerializeField] Ease ease = Ease.InQuad;
-        [SerializeField] GameObject explosion;
+        [SerializeField] private Ease ease = Ease.InQuad;
+        [SerializeField] private GameObject explosion;
 
         InputReader inputReader;
         // AudioManager audioManager;
@@ -33,18 +33,18 @@ namespace Project.Scripts.Game.Board
             // audioManager = GetComponent<AudioManager>();
         }
 
-        void Start()
+        private void Start()
         {
             InitializeGrid();
             inputReader.Fire += OnSelectGem;
         }
 
-        void OnDestroy()
+        private void OnDestroy()
         {
             inputReader.Fire -= OnSelectGem;
         }
 
-        void OnSelectGem()
+        private void OnSelectGem()
         {
             var gridPos = grid.GetXY(Camera.main.ScreenToWorldPoint(inputReader.Selected));
 
@@ -91,41 +91,35 @@ namespace Project.Scripts.Game.Board
             {
                 for (var y = 0; y < levelSetting.height; y++)
                 {
-                    if (grid.GetValue(x, y) == null)
-                    {
-                        CreateGem(x, y);
-                        // audioManager.PlayPop();
-                        yield return new WaitForSeconds(0.1f);
-                        ;
-                    }
+                    if (grid.GetValue(x, y) != null) continue;
+                    CreateGem(x, y);
+                    // audioManager.PlayPop();
+                    yield return new WaitForSeconds(0.1f);
+                    ;
                 }
             }
         }
 
-        IEnumerator MakeGemsFall()
+        private IEnumerator MakeGemsFall()
         {
             // TODO: Make this more efficient
             for (var x = 0; x < levelSetting.width; x++)
             {
                 for (var y = 0; y < levelSetting.height; y++)
                 {
-                    if (grid.GetValue(x, y) == null)
+                    if (grid.GetValue(x, y) != null) continue;
+                    for (var i = y + 1; i < levelSetting.height; i++)
                     {
-                        for (var i = y + 1; i < levelSetting.height; i++)
-                        {
-                            if (grid.GetValue(x, i) != null)
-                            {
-                                var gem = grid.GetValue(x, i).GetValue();
-                                grid.SetValue(x, y, grid.GetValue(x, i));
-                                grid.SetValue(x, i, null);
-                                gem.transform
-                                    .DOLocalMove(grid.GetWorldPositionCenter(x, y), 0.5f)
-                                    .SetEase(ease);
-                                // audioManager.PlayWoosh();
-                                yield return new WaitForSeconds(0.1f);
-                                break;
-                            }
-                        }
+                        if (grid.GetValue(x, i) == null) continue;
+                        var gem = grid.GetValue(x, i).GetValue();
+                        grid.SetValue(x, y, grid.GetValue(x, i));
+                        grid.SetValue(x, i, null);
+                        gem.transform
+                            .DOLocalMove(grid.GetWorldPositionCenter(x, y), 0.5f)
+                            .SetEase(ease);
+                        // audioManager.PlayWoosh();
+                        yield return new WaitForSeconds(0.1f);
+                        break;
                     }
                 }
             }
@@ -239,7 +233,7 @@ namespace Project.Scripts.Game.Board
                 CreateGem(x, y);
         }
 
-        void CreateGem(int x, int y)
+        private void CreateGem(int x, int y)
         {
             var type = levelSetting.gems[Random.Range(0, levelSetting.gems.Count)];
             var gem = factory.Create(type);
@@ -251,12 +245,12 @@ namespace Project.Scripts.Game.Board
             grid.SetValue(x, y, gridObject);
         }
 
-        void DeselectGem() => selectedGem = new Vector2Int(-1, -1);
-        void SelectGem(Vector2Int gridPos) => selectedGem = gridPos;
+        private void DeselectGem() => selectedGem = new Vector2Int(-1, -1);
+        private void SelectGem(Vector2Int gridPos) => selectedGem = gridPos;
 
-        bool IsEmptyPosition(Vector2Int gridPosition) => grid.GetValue(gridPosition.x, gridPosition.y) == null;
+        private bool IsEmptyPosition(Vector2Int gridPosition) => grid.GetValue(gridPosition.x, gridPosition.y) == null;
 
-        bool IsValidPosition(Vector2 gridPosition)
+        private bool IsValidPosition(Vector2 gridPosition)
         {
             return gridPosition.x >= 0 && gridPosition.x < levelSetting.width && gridPosition.y >= 0 &&
                    gridPosition.y < levelSetting.height;
