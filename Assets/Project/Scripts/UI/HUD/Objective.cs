@@ -12,7 +12,7 @@ namespace Project.Scripts.UI.HUD
         [SerializeField] private Image icon;
 
         [Inject] private SignalBus signalBus;
-        [Inject] private Gem gem;
+        [Inject] private GemType gem;
 
         private int counter = 3;
 
@@ -37,7 +37,7 @@ namespace Project.Scripts.UI.HUD
                 signalBus.Fire(new Signals.OnObjectiveComplete { type = gem.type });
         }
         
-        public class Factory : PlaceholderFactory<Gem, Objective>
+        public class Factory : PlaceholderFactory<GemType, Objective>
         {
         }
     }

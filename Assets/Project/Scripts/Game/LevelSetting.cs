@@ -8,7 +8,7 @@ namespace Project.Scripts.Game
     [Serializable]
     public class LevelSetting : ScriptableObject
     {
-        public List<Gem> gems;
+        public List<GemType> gems;
         public int height;
         public int width;
         public int moves;
@@ -16,7 +16,7 @@ namespace Project.Scripts.Game
     }
 
     [Serializable]
-    public class Gem
+    public class GemType
     {
         public Sprite sprite;
         public Type type;

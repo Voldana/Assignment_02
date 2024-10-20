@@ -9,7 +9,7 @@ namespace Project.Scripts.Game
         [SerializeField] private Image icon;
 
         [Inject] private Transform icons;
-        [Inject] private Gem gem;
+        // [Inject] private Gem gem;
         
         private int x, y;
 
@@ -20,7 +20,7 @@ namespace Project.Scripts.Game
 
         private void SetGem()
         {
-            icon.sprite = gem.sprite;
+            // icon.sprite = gem.sprite;
         }
 
         public void OnClick()
@@ -34,7 +34,7 @@ namespace Project.Scripts.Game
             x = row;
         }
 
-        public class Factory : PlaceholderFactory<Transform,Gem, Cell>
+        public class Factory : PlaceholderFactory<Transform,GemType, Cell>
         {
         }
     }
