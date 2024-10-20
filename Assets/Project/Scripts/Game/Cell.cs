@@ -1,5 +1,3 @@
-using System;
-using Project.Scripts.UI.HUD;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
@@ -10,7 +8,10 @@ namespace Project.Scripts.Game
     {
         [SerializeField] private Image icon;
 
+        [Inject] private Transform icons;
         [Inject] private Gem gem;
+        
+        private int x, y;
 
         private void Start()
         {
@@ -22,7 +23,18 @@ namespace Project.Scripts.Game
             icon.sprite = gem.sprite;
         }
 
-        public class Factory : PlaceholderFactory<Gem, Cell>
+        public void OnClick()
+        {
+            
+        }
+
+        public void SetCoordinates(int row, int column)
+        {
+            y = column;
+            x = row;
+        }
+
+        public class Factory : PlaceholderFactory<Transform,Gem, Cell>
         {
         }
     }

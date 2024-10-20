@@ -31,7 +31,7 @@ namespace Project.Scripts.UI.HUD
         private void CreateObjectives()
         {
             foreach (var color in levelSetting.gems)
-                factory.Create(color).transform.SetParent(objectives);
+                factory.Create(color).transform.SetParent(objectives,false);
         }
 
         private void SetTimer()
