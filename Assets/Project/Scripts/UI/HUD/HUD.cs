@@ -87,8 +87,8 @@ namespace Project.Scripts.UI.HUD
 
         private void SetTimer()
         {
-            UpdateClock(levelSetting.time * 60);
-            timer = new Timer(levelSetting.time * 60, UpdateClock, OnTimerEnd);
+            UpdateClock(levelSetting.time);
+            timer = new Timer(levelSetting.time , UpdateClock, OnTimerEnd);
             timer.Start();
         }
 

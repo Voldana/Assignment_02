@@ -70,19 +70,7 @@ namespace Project.Scripts.Game.Board
         IEnumerator RunGameLoop(Vector2Int gridPosA, Vector2Int gridPosB)
         {
             yield return StartCoroutine(SwapGems(gridPosA, gridPosB));
-
-            // Matches?
             yield return CheckMatches();
-            // List<Vector2Int> matches = FindMatches();
-            // // TODO: Calculate score
-            // // Make Gems explode
-            // yield return StartCoroutine(ExplodeGems(matches));
-            // // Make gems fall
-            // yield return StartCoroutine(MakeGemsFall());
-            // // Fill empty spots
-            // yield return StartCoroutine(FillEmptySpots());
-
-
             // TODO: Check if game is over
 
             DeselectGem();
@@ -115,8 +103,7 @@ namespace Project.Scripts.Game.Board
                 {
                     if (grid.GetValue(x, y) != null) continue;
                     CreateGem(x, y);
-                    // audioManager.PlayPop();
-                    yield return new WaitForSeconds(0.1f);
+                    yield return new WaitForSeconds(0.05f);
                     ;
                 }
             }
@@ -137,10 +124,10 @@ namespace Project.Scripts.Game.Board
                         grid.SetValue(x, y, grid.GetValue(x, i));
                         grid.SetValue(x, i, null);
                         gem.transform
-                            .DOLocalMove(grid.GetWorldPositionCenter(x, y), 0.5f)
+                            .DOLocalMove(grid.GetWorldPositionCenter(x, y), 0.25f)
                             .SetEase(Ease);
                         // audioManager.PlayWoosh();
-                        yield return new WaitForSeconds(0.1f);
+                        yield return new WaitForSeconds(0.05f);
                         break;
                     }
                 }
@@ -230,15 +217,6 @@ namespace Project.Scripts.Game.Board
                 }
             }
 
-            if (matchesWithGemType.Count == 0)
-            {
-                // audioManager.PlayNoMatch();
-            }
-            else
-            {
-                // audioManager.PlayMatch();
-            }
-
             return matchesWithGemType;
         }
 
@@ -246,7 +224,11 @@ namespace Project.Scripts.Game.Board
         {
             var gridObjectA = grid.GetValue(gridPosA.x, gridPosA.y);
             var gridObjectB = grid.GetValue(gridPosB.x, gridPosB.y);
-
+            if (!IsAdjacent(gridPosA, gridPosB))
+            {
+                ShakeGems(gridObjectA.GetValue(),gridObjectB.GetValue());
+                yield break;
+            }
             gridObjectA.GetValue().transform
                 .DOLocalMove(grid.GetWorldPositionCenter(gridPosB.x, gridPosB.y), 0.5f)
                 .SetEase(Ease);
@@ -258,6 +240,18 @@ namespace Project.Scripts.Game.Board
             grid.SetValue(gridPosB.x, gridPosB.y, gridObjectA);
             signalBus.Fire(new Signals.OnMove());
             yield return new WaitForSeconds(0.5f);
+        }
+
+        private void ShakeGems(Gem gemA, Gem gemB)
+        {
+            gemA.transform.DOShakeRotation(0.5f, Vector3.one * 5);
+            gemB.transform.DOShakeRotation(0.5f, Vector3.one * 5);
+        }
+
+        private static bool IsAdjacent(Vector2Int posA, Vector2Int posB)
+        {
+            var difference = (posA - posB).magnitude;
+            return !(difference > 1);
         }
 
         void InitializeGrid()

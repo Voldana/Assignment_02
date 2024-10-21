@@ -694,6 +694,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   objective: {fileID: 6658359415735134354, guid: cb005fc495abebc4983161e99b10deb4, type: 3}
+  pauseMenu: {fileID: 8962366946070100433, guid: 80dcc7f342295f542b191795f1841ac4, type: 3}
   loseMenu: {fileID: 710798218750205674, guid: bdba6a4357c17d94eaf16eb94b035af0, type: 3}
   winMenu: {fileID: 2655441063388225846, guid: 2aec91ab50684e84e9438e74a2b21654, type: 3}
 --- !u!114 &1409198436
