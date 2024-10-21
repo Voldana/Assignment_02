@@ -7,10 +7,12 @@ namespace Project.Scripts
     public class SceneInstaller : MonoInstaller
     {
         [SerializeField] private LevelSetting levelSetting;
+        [SerializeField] private AudioManager audioManager;
 
         public override void InstallBindings()
         {
             Container.BindInstance(levelSetting).AsSingle();
+            Container.BindInstance(audioManager).AsSingle();
             
             Container.DeclareSignal<Signals.OnObjectiveComplete>();
             Container.DeclareSignal<Signals.OnMatch>();

@@ -1,8 +1,10 @@
 ﻿using UnityEngine;
 
-namespace Project.Scripts {
-    [RequireComponent(typeof(AudioSource))]
-    public class AudioManager : MonoBehaviour {
+namespace Project.Scripts
+{
+    public class AudioManager : MonoBehaviour
+    {
+        [SerializeField] private AudioSource audioSource;
         [SerializeField] private AudioClip click;
         [SerializeField] private AudioClip deselect;
         [SerializeField] private AudioClip match;
@@ -10,11 +12,6 @@ namespace Project.Scripts {
         [SerializeField] private AudioClip woosh;
         [SerializeField] private AudioClip pop;
 
-        private AudioSource audioSource;
-
-        private void OnValidate() {
-            if (audioSource == null) audioSource = GetComponent<AudioSource>();
-        }
 
         public void PlayClick() => audioSource.PlayOneShot(click);
         public void PlayDeselect() => audioSource.PlayOneShot(deselect);
@@ -23,7 +20,8 @@ namespace Project.Scripts {
         public void PlayWoosh() => PlayRandomPitch(woosh);
         public void PlayPop() => PlayRandomPitch(pop);
 
-        private void PlayRandomPitch(AudioClip audioClip) {
+        private void PlayRandomPitch(AudioClip audioClip)
+        {
             audioSource.pitch = Random.Range(0.9f, 1.1f);
             audioSource.PlayOneShot(audioClip);
             audioSource.pitch = 1f;

@@ -11,6 +11,7 @@ namespace Project.Scripts.Game.Board
     public class Manager : MonoBehaviour
     {
         [Inject] private LevelSetting levelSetting;
+        [Inject] private AudioManager audioManager;
         [Inject] private Gem.Factory factory;
         [Inject] private SignalBus signalBus;
 
@@ -21,7 +22,6 @@ namespace Project.Scripts.Game.Board
         [SerializeField] private GameObject explosion;
 
         private InputReader inputReader;
-        // AudioManager audioManager;
 
         private Grid<GridObject<Gem>> grid;
 
@@ -142,25 +142,20 @@ namespace Project.Scripts.Game.Board
 
         IEnumerator ExplodeGems(List<Vector2Int> matches)
         {
-            // audioManager.PlayPop();
-
             foreach (var match in matches)
             {
                 var gem = grid.GetValue(match.x, match.y).GetValue();
                 grid.SetValue(match.x, match.y, null);
-
                 ExplodeVFX(match);
-
                 gem.transform.DOPunchScale(Vector3.one * 0.1f, 0.1f, 1, 0.5f);
-
                 yield return new WaitForSeconds(0.1f);
-
                 Destroy(gem.gameObject, 0.1f);
             }
         }
 
         private void ExplodeVFX(Vector2Int match)
         {
+            audioManager.PlayPop();
             var fx = Instantiate(explosion, transform);
             fx.transform.position = grid.GetWorldPositionCenter(match.x, match.y);
             Destroy(fx, 5f);
@@ -234,7 +229,7 @@ namespace Project.Scripts.Game.Board
 
             grid.SetValue(gridPosA.x, gridPosA.y, gridObjectB);
             grid.SetValue(gridPosB.x, gridPosB.y, gridObjectA);
-
+            signalBus.Fire(new Signals.OnMove());
             yield return new WaitForSeconds(0.5f);
         }
 

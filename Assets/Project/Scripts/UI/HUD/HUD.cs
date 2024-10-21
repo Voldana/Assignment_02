@@ -13,19 +13,40 @@ namespace Project.Scripts.UI.HUD
 
         [Inject] private Objective.Factory factory;
         [Inject] private LevelSetting levelSetting;
+        [Inject] private SignalBus signalBus;
 
+        private int remainingMoves;
         private Timer timer;
-
         private void Start()
         {
+            remainingMoves = levelSetting.moves;
+            SubscribeSignals();
             SetRemainingMoves();
             CreateObjectives();
             SetTimer();
         }
 
+        private void SubscribeSignals()
+        {
+            signalBus.Subscribe<Signals.OnMove>(OnGemSwap);
+        }
+
+        private void OnGemSwap()
+        {
+            remainingMoves--;
+            if (remainingMoves <= 0)
+                ShowLoseScreen();
+            SetRemainingMoves();
+        }
+
+        private void ShowLoseScreen()
+        {
+            
+        }
+
         private void SetRemainingMoves()
         {
-            moves.text = levelSetting.moves.ToString();
+            moves.text = remainingMoves.ToString();
         }
 
         private void CreateObjectives()
