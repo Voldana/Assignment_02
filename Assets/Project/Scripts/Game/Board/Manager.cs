@@ -159,7 +159,7 @@ namespace Project.Scripts.Game.Board
             }
         }
 
-        void ExplodeVFX(Vector2Int match)
+        private void ExplodeVFX(Vector2Int match)
         {
             // TODO: Pool
             // var fx = Instantiate(explosion, transform);
