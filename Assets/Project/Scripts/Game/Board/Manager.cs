@@ -15,9 +15,9 @@ namespace Project.Scripts.Game.Board
         [Inject] private SignalBus signalBus;
 
         private readonly Vector3 originPosition = new(-.5f, -1.3f, 0);
+        private const Ease Ease = DG.Tweening.Ease.InQuad;
         private const float CellSize = 1f;
 
-        [SerializeField] private Ease ease = Ease.InQuad;
         [SerializeField] private GameObject explosion;
 
         private InputReader inputReader;
@@ -131,7 +131,7 @@ namespace Project.Scripts.Game.Board
                         grid.SetValue(x, i, null);
                         gem.transform
                             .DOLocalMove(grid.GetWorldPositionCenter(x, y), 0.5f)
-                            .SetEase(ease);
+                            .SetEase(Ease);
                         // audioManager.PlayWoosh();
                         yield return new WaitForSeconds(0.1f);
                         break;
@@ -161,10 +161,9 @@ namespace Project.Scripts.Game.Board
 
         private void ExplodeVFX(Vector2Int match)
         {
-            // TODO: Pool
-            // var fx = Instantiate(explosion, transform);
-            // fx.transform.position = grid.GetWorldPositionCenter(match.x, match.y);
-            // Destroy(fx, 5f);
+            var fx = Instantiate(explosion, transform);
+            fx.transform.position = grid.GetWorldPositionCenter(match.x, match.y);
+            Destroy(fx, 5f);
         }
 
         List<Vector2Int> FindMatches()
@@ -228,10 +227,10 @@ namespace Project.Scripts.Game.Board
 
             gridObjectA.GetValue().transform
                 .DOLocalMove(grid.GetWorldPositionCenter(gridPosB.x, gridPosB.y), 0.5f)
-                .SetEase(ease);
+                .SetEase(Ease);
             gridObjectB.GetValue().transform
                 .DOLocalMove(grid.GetWorldPositionCenter(gridPosA.x, gridPosA.y), 0.5f)
-                .SetEase(ease);
+                .SetEase(Ease);
 
             grid.SetValue(gridPosA.x, gridPosA.y, gridObjectB);
             grid.SetValue(gridPosB.x, gridPosB.y, gridObjectA);
