@@ -26,6 +26,7 @@ namespace Project.Scripts.Game.Board
         private Grid<GridObject<Gem>> grid;
 
         private Vector2Int selectedGem = Vector2Int.one * -1;
+        private bool subscribed = false;
 
         void Awake()
         {
@@ -37,7 +38,7 @@ namespace Project.Scripts.Game.Board
         {
             InitializeGrid();
             inputReader.Fire += OnSelectGem;
-            DOVirtual.DelayedCall(1.5f, () => { StartCoroutine(CheckMatches()); });
+            DOVirtual.DelayedCall(1.5f, () => { StartCoroutine(CheckMatches(true)); });
         }
 
         private void OnDestroy()
@@ -70,15 +71,22 @@ namespace Project.Scripts.Game.Board
         IEnumerator RunGameLoop(Vector2Int gridPosA, Vector2Int gridPosB)
         {
             yield return StartCoroutine(SwapGems(gridPosA, gridPosB));
-            yield return CheckMatches();
+            yield return CheckMatches(false);
             // TODO: Check if game is over
 
             DeselectGem();
         }
 
-        private IEnumerator CheckMatches()
+        private IEnumerator CheckMatches(bool init)
         {
             var matches = FindMatches();
+            if (init && matches.Count > 0)
+            {
+                foreach (var match in matches)
+                    ReplaceGems(match);
+                yield break;
+            }
+
             if (matches.Count == 0)
                 yield break;
             // TODO: Calculate score
@@ -86,7 +94,37 @@ namespace Project.Scripts.Game.Board
             yield return StartCoroutine(ExplodeGems(matches));
             yield return StartCoroutine(MakeGemsFall());
             yield return StartCoroutine(FillEmptySpots());
-            StartCoroutine(CheckMatches());
+            StartCoroutine(CheckMatches(init));
+        }
+
+        private void ReplaceGems(GemMatch match)
+        {
+            foreach (var gem in match.coordinates)
+            {
+                grid.SetValue(gem.x, gem.y, null);
+                var neighborTypes = new HashSet<GemType>();
+
+                if (gem.x > 0)
+                    neighborTypes.Add(grid.GetValue(gem.x - 1, gem.y).GetValue().GetGemType());
+
+                if (gem.x < 7)
+                    neighborTypes.Add(grid.GetValue(gem.x + 1, gem.y).GetValue().GetGemType());
+
+                if (gem.y > 0)
+                    neighborTypes.Add(grid.GetValue(gem.x, gem.y - 1).GetValue().GetGemType());
+
+                if (gem.y < 7)
+                    neighborTypes.Add(grid.GetValue(gem.x, gem.y + 1).GetValue().GetGemType());
+
+                GemType newGemType;
+                do
+                {
+                    newGemType = levelSetting.gems[Random.Range(0, levelSetting.gems.Count)];
+                    ;
+                } while (neighborTypes.Contains(newGemType));
+
+                CreateGem(gem.x, gem.y, newGemType);
+            }
         }
 
         private void SendMatchSignals(List<GemMatch> matches)
@@ -102,9 +140,9 @@ namespace Project.Scripts.Game.Board
                 for (var y = 0; y < levelSetting.height; y++)
                 {
                     if (grid.GetValue(x, y) != null) continue;
-                    CreateGem(x, y);
+                    var type = levelSetting.gems[Random.Range(0, levelSetting.gems.Count)];
+                    CreateGem(x, y, type);
                     yield return new WaitForSeconds(0.05f);
-                    ;
                 }
             }
         }
@@ -226,9 +264,10 @@ namespace Project.Scripts.Game.Board
             var gridObjectB = grid.GetValue(gridPosB.x, gridPosB.y);
             if (!IsAdjacent(gridPosA, gridPosB))
             {
-                ShakeGems(gridObjectA.GetValue(),gridObjectB.GetValue());
+                ShakeGems(gridObjectA.GetValue(), gridObjectB.GetValue());
                 yield break;
             }
+
             gridObjectA.GetValue().transform
                 .DOLocalMove(grid.GetWorldPositionCenter(gridPosB.x, gridPosB.y), 0.5f)
                 .SetEase(Ease);
@@ -254,18 +293,20 @@ namespace Project.Scripts.Game.Board
             return !(difference > 1);
         }
 
-        void InitializeGrid()
+        private void InitializeGrid()
         {
             grid = Grid<GridObject<Gem>>.VerticalGrid(levelSetting, CellSize, originPosition);
 
             for (var x = 0; x < levelSetting.width; x++)
             for (var y = 0; y < levelSetting.height; y++)
-                CreateGem(x, y);
+            {
+                var type = levelSetting.gems[Random.Range(0, levelSetting.gems.Count)];
+                CreateGem(x, y, type);
+            }
         }
 
-        private void CreateGem(int x, int y)
+        private void CreateGem(int x, int y, GemType type)
         {
-            var type = levelSetting.gems[Random.Range(0, levelSetting.gems.Count)];
             var gem = factory.Create(type);
             gem.transform.position = grid.GetWorldPositionCenter(x, y);
             gem.transform.SetParent(transform);
