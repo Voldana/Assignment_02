@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using Project.Scripts.Game;
 using TMPro;
 using UnityEngine;
@@ -11,14 +13,24 @@ namespace Project.Scripts.UI.HUD
         [SerializeField] private TMP_Text clock;
         [SerializeField] private TMP_Text moves;
 
+        [Inject] private LoseMenu.Factory loseFactory;
+        [Inject] private WinMenu.Factory winFactory;
         [Inject] private Objective.Factory factory;
         [Inject] private LevelSetting levelSetting;
         [Inject] private SignalBus signalBus;
 
+        private Dictionary<Type, bool> objs;
         private int remainingMoves;
+        private int score;
         private Timer timer;
+
         private void Start()
         {
+            objs = new Dictionary<Type, bool>
+            {
+                { Type.Green, false }, { Type.Purple, false }, { Type.Blue, false }, { Type.Red, false },
+                { Type.Yellow, false }
+            };
             remainingMoves = levelSetting.moves;
             SubscribeSignals();
             SetRemainingMoves();
@@ -28,6 +40,7 @@ namespace Project.Scripts.UI.HUD
 
         private void SubscribeSignals()
         {
+            signalBus.Subscribe<Signals.OnObjectiveComplete>(ObjectiveComplete);
             signalBus.Subscribe<Signals.OnMove>(OnGemSwap);
         }
 
@@ -39,9 +52,26 @@ namespace Project.Scripts.UI.HUD
             SetRemainingMoves();
         }
 
+        private void ObjectiveComplete(Signals.OnObjectiveComplete signal)
+        {
+            objs[signal.type] = true;
+            CheckAllObjectives();
+        }
+
+        private void CheckAllObjectives()
+        {
+            if (objs.Any(objective => !objective.Value))
+                return;
+            ShowWinScreen();
+        }
+
+        private void ShowWinScreen()
+        {
+            winFactory.Create(score).transform.SetParent(transform.parent,false);
+        }
+
         private void ShowLoseScreen()
         {
-            
         }
 
         private void SetRemainingMoves()
@@ -52,7 +82,7 @@ namespace Project.Scripts.UI.HUD
         private void CreateObjectives()
         {
             foreach (var color in levelSetting.gems)
-                factory.Create(color).transform.SetParent(objectives,false);
+                factory.Create(color).transform.SetParent(objectives, false);
         }
 
         private void SetTimer()
@@ -69,6 +99,7 @@ namespace Project.Scripts.UI.HUD
 
         private void OnTimerEnd()
         {
+            ShowLoseScreen();
         }
     }
 }

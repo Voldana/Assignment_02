@@ -213,10 +213,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Audio Manager
       objectReference: {fileID: 0}
-    - target: {fileID: 1015892752287631970, guid: 14d1368df39135c4d89fb3e0f35b9f5f, type: 3}
-      propertyPath: m_PlayOnAwake
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 4544742365847421466, guid: 14d1368df39135c4d89fb3e0f35b9f5f, type: 3}
       propertyPath: m_LocalPosition.x
       value: -24.985178
@@ -356,46 +352,6 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 3.5, y: 3.5, z: -10}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1074484012
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1074484014}
-  - component: {fileID: 1074484013}
-  m_Layer: 0
-  m_Name: GameObject
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!81 &1074484013
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1074484012}
-  m_Enabled: 1
---- !u!4 &1074484014
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1074484012}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -24.985178, y: 4.2396765, z: -1.2765669}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -738,6 +694,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   objective: {fileID: 6658359415735134354, guid: cb005fc495abebc4983161e99b10deb4, type: 3}
+  loseMenu: {fileID: 710798218750205674, guid: bdba6a4357c17d94eaf16eb94b035af0, type: 3}
+  winMenu: {fileID: 2655441063388225846, guid: 2aec91ab50684e84e9438e74a2b21654, type: 3}
 --- !u!114 &1409198436
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -936,4 +894,3 @@ SceneRoots:
   - {fileID: 1693307203}
   - {fileID: 651081953}
   - {fileID: 918389666}
-  - {fileID: 1074484014}

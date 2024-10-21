@@ -31,12 +31,11 @@ namespace Project.Scripts.UI.HUD
         {
             if (!signal.type.Equals(gem.type) || counter <= 0) return;
             counter--;
-            if (counter != 0)
-                number.text = $"x{counter}";
-            else
+            if (counter == 0)
                 signalBus.Fire(new Signals.OnObjectiveComplete { type = gem.type });
+            number.text = $"x{counter}";
         }
-        
+
         public class Factory : PlaceholderFactory<GemType, Objective>
         {
         }

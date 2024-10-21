@@ -37,7 +37,7 @@ namespace Project.Scripts.Game.Board
         {
             InitializeGrid();
             inputReader.Fire += OnSelectGem;
-            StartCoroutine(CheckMatches());
+            DOVirtual.DelayedCall(1.5f, () => { StartCoroutine(CheckMatches()); });
         }
 
         private void OnDestroy()
@@ -94,10 +94,17 @@ namespace Project.Scripts.Game.Board
             if (matches.Count == 0)
                 yield break;
             // TODO: Calculate score
+            SendMatchSignals(matches);
             yield return StartCoroutine(ExplodeGems(matches));
             yield return StartCoroutine(MakeGemsFall());
             yield return StartCoroutine(FillEmptySpots());
             StartCoroutine(CheckMatches());
+        }
+
+        private void SendMatchSignals(List<GemMatch> matches)
+        {
+            foreach (var match in matches)
+                signalBus.Fire(new Signals.OnMatch { type = match.gemType.type });
         }
 
         private IEnumerator FillEmptySpots()
@@ -140,16 +147,20 @@ namespace Project.Scripts.Game.Board
             }
         }
 
-        IEnumerator ExplodeGems(List<Vector2Int> matches)
+        private IEnumerator ExplodeGems(List<GemMatch> matches)
         {
             foreach (var match in matches)
             {
-                var gem = grid.GetValue(match.x, match.y).GetValue();
-                grid.SetValue(match.x, match.y, null);
-                ExplodeVFX(match);
-                gem.transform.DOPunchScale(Vector3.one * 0.1f, 0.1f, 1, 0.5f);
-                yield return new WaitForSeconds(0.1f);
-                Destroy(gem.gameObject, 0.1f);
+                foreach (var coordinate in match.coordinates)
+                {
+                    if (grid.GetValue(coordinate.x, coordinate.y) == null) continue;
+                    var gem = grid.GetValue(coordinate.x, coordinate.y).GetValue();
+                    grid.SetValue(coordinate.x, coordinate.y, null);
+                    ExplodeVFX(coordinate);
+                    gem.transform.DOPunchScale(Vector3.one * 0.1f, 0.1f, 1, 0.5f);
+                    yield return new WaitForSeconds(0.1f);
+                    Destroy(gem.gameObject, 0.1f);
+                }
             }
         }
 
@@ -161,49 +172,65 @@ namespace Project.Scripts.Game.Board
             Destroy(fx, 5f);
         }
 
-        List<Vector2Int> FindMatches()
+        private List<GemMatch> FindMatches()
         {
-            HashSet<Vector2Int> matches = new();
+            List<GemMatch> matchesWithGemType = new();
 
-            // Horizontal
+            // Horizontal Match Finder
             for (var y = 0; y < levelSetting.height; y++)
             {
                 for (var x = 0; x < levelSetting.width - 2; x++)
                 {
                     var gemA = grid.GetValue(x, y);
-                    var gemB = grid.GetValue(x + 1, y);
-                    var gemC = grid.GetValue(x + 2, y);
+                    if (gemA == null) continue;
 
-                    if (gemA == null || gemB == null || gemC == null) continue;
+                    var gemType = gemA.GetValue().GetGemType();
+                    List<Vector2Int> currentMatch = new() { new Vector2Int(x, y) };
 
-                    if (gemA.GetValue().GetGemType() != gemB.GetValue().GetGemType()
-                        || gemB.GetValue().GetGemType() != gemC.GetValue().GetGemType()) continue;
-                    matches.Add(new Vector2Int(x, y));
-                    matches.Add(new Vector2Int(x + 1, y));
-                    matches.Add(new Vector2Int(x + 2, y));
+                    // Check if there are more matching gems horizontally
+                    for (var i = x + 1; i < levelSetting.width; i++)
+                    {
+                        var nextGem = grid.GetValue(i, y);
+                        if (nextGem == null || nextGem.GetValue().GetGemType() != gemType) break;
+
+                        currentMatch.Add(new Vector2Int(i, y));
+                    }
+
+                    // If the match has 3 or more gems, add it as a valid match
+                    if (currentMatch.Count < 3) continue;
+                    matchesWithGemType.Add(new GemMatch(currentMatch, gemType));
+                    x += currentMatch.Count - 1; // Skip over the matched gems in the horizontal direction
                 }
             }
 
-            // Vertical
+            // Vertical Match Finder
             for (var x = 0; x < levelSetting.width; x++)
             {
                 for (var y = 0; y < levelSetting.height - 2; y++)
                 {
                     var gemA = grid.GetValue(x, y);
-                    var gemB = grid.GetValue(x, y + 1);
-                    var gemC = grid.GetValue(x, y + 2);
+                    if (gemA == null) continue;
 
-                    if (gemA == null || gemB == null || gemC == null) continue;
+                    var gemType = gemA.GetValue().GetGemType();
+                    List<Vector2Int> currentMatch = new() { new Vector2Int(x, y) };
 
-                    if (gemA.GetValue().GetGemType() != gemB.GetValue().GetGemType()
-                        || gemB.GetValue().GetGemType() != gemC.GetValue().GetGemType()) continue;
-                    matches.Add(new Vector2Int(x, y));
-                    matches.Add(new Vector2Int(x, y + 1));
-                    matches.Add(new Vector2Int(x, y + 2));
+                    // Check if there are more matching gems vertically
+                    for (int i = y + 1; i < levelSetting.height; i++)
+                    {
+                        var nextGem = grid.GetValue(x, i);
+                        if (nextGem == null || nextGem.GetValue().GetGemType() != gemType) break;
+
+                        currentMatch.Add(new Vector2Int(x, i));
+                    }
+
+                    // If the match has 3 or more gems, add it as a valid match
+                    if (currentMatch.Count < 3) continue;
+                    matchesWithGemType.Add(new GemMatch(currentMatch, gemType));
+                    y += currentMatch.Count - 1; // Skip over the matched gems in the vertical direction
                 }
             }
 
-            if (matches.Count == 0)
+            if (matchesWithGemType.Count == 0)
             {
                 // audioManager.PlayNoMatch();
             }
@@ -212,7 +239,7 @@ namespace Project.Scripts.Game.Board
                 // audioManager.PlayMatch();
             }
 
-            return new List<Vector2Int>(matches);
+            return matchesWithGemType;
         }
 
         private IEnumerator SwapGems(Vector2Int gridPosA, Vector2Int gridPosB)
@@ -263,6 +290,18 @@ namespace Project.Scripts.Game.Board
         {
             return gridPosition.x >= 0 && gridPosition.x < levelSetting.width && gridPosition.y >= 0 &&
                    gridPosition.y < levelSetting.height;
+        }
+    }
+
+    internal struct GemMatch
+    {
+        public List<Vector2Int> coordinates;
+        public GemType gemType;
+
+        public GemMatch(List<Vector2Int> coordinates, GemType gemType)
+        {
+            this.coordinates = coordinates;
+            this.gemType = gemType;
         }
     }
 }
