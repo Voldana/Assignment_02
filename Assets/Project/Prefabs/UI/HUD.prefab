@@ -154,6 +154,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   objectives: {fileID: 8203567275367833952}
+  scoreText: {fileID: 3665401343031803305}
   clock: {fileID: 4337672051938455416}
   moves: {fileID: 4919796697666259676}
 --- !u!1 &1052654335033882075
@@ -955,7 +956,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 15
+  m_text: 0
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 5d98d6c61da6aac4a93748ecb231ee04, type: 2}
   m_sharedMaterial: {fileID: 2371250900605980195, guid: 5d98d6c61da6aac4a93748ecb231ee04, type: 2}

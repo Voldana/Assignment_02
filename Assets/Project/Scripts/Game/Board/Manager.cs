@@ -31,7 +31,6 @@ namespace Project.Scripts.Game.Board
         void Awake()
         {
             inputReader = GetComponent<InputReader>();
-            // audioManager = GetComponent<AudioManager>();
         }
 
         private void Start()
@@ -77,6 +76,8 @@ namespace Project.Scripts.Game.Board
             DeselectGem();
         }
 
+        private int multiplier = 1;
+
         private IEnumerator CheckMatches(bool init)
         {
             var matches = FindMatches();
@@ -88,20 +89,30 @@ namespace Project.Scripts.Game.Board
             }
 
             if (matches.Count == 0)
+            {
+                multiplier = 1;
                 yield break;
-            // TODO: Calculate score
+            }
+
+            CalculateScore(matches.Count);
             SendMatchSignals(matches);
             yield return StartCoroutine(ExplodeGems(matches));
             yield return StartCoroutine(MakeGemsFall());
             yield return StartCoroutine(FillEmptySpots());
+            multiplier++;
             StartCoroutine(CheckMatches(init));
+        }
+
+        private void CalculateScore(int matches)
+        {
+            signalBus.Fire(new Signals.AddToScore { score = matches * multiplier * 10 });
         }
 
         private void ReplaceGems(GemMatch match)
         {
             foreach (var gem in match.coordinates)
             {
-                grid.SetValue(gem.x, gem.y, null);
+                var cell = grid.GetValue(gem.x, gem.y).GetValue();
                 var neighborTypes = new HashSet<GemType>();
 
                 if (gem.x > 0)
@@ -115,7 +126,9 @@ namespace Project.Scripts.Game.Board
 
                 if (gem.y < 7)
                     neighborTypes.Add(grid.GetValue(gem.x, gem.y + 1).GetValue().GetGemType());
-
+                
+                grid.SetValue(gem.x, gem.y, null);
+                Destroy(cell.gameObject);
                 GemType newGemType;
                 do
                 {

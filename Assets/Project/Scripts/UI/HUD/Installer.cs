@@ -19,7 +19,7 @@ namespace Project.Scripts.UI.HUD
             Container.BindFactory<GemType, Objective, Objective.Factory>().FromComponentInNewPrefab(objective).AsSingle();
             Container.BindFactory<string, LoseMenu, LoseMenu.Factory>().FromComponentInNewPrefab(loseMenu).AsSingle();
             Container.BindFactory<PauseMenu, PauseMenu.Factory>().FromComponentInNewPrefab(pauseMenu).AsSingle();
-            Container.BindFactory<int, WinMenu, WinMenu.Factory>().FromComponentInNewPrefab(winMenu).AsSingle();
+            Container.BindFactory<WinDetails, WinMenu, WinMenu.Factory>().FromComponentInNewPrefab(winMenu).AsSingle();
         }
     }
 }

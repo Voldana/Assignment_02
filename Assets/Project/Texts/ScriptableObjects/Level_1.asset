@@ -26,4 +26,4 @@ MonoBehaviour:
   height: 8
   width: 8
   moves: 10
-  time: 20
+  time: 1

@@ -12,6 +12,11 @@ namespace Project.Scripts
         public struct OnMove
         {
         }
+        
+        public struct AddToScore
+        {
+            public int score;
+        }
 
         public struct OnObjectiveComplete
         {

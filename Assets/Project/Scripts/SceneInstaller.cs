@@ -13,8 +13,10 @@ namespace Project.Scripts
         {
             Container.BindInstance(levelSetting).AsSingle();
             Container.BindInstance(audioManager).AsSingle();
+            Container.Bind<ScoreManager>().AsSingle();
             
             Container.DeclareSignal<Signals.OnObjectiveComplete>();
+            Container.DeclareSignal<Signals.AddToScore>();
             Container.DeclareSignal<Signals.OnMatch>();
             Container.DeclareSignal<Signals.OnMove>();
         }

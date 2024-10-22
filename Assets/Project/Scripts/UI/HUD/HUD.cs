@@ -10,6 +10,7 @@ namespace Project.Scripts.UI.HUD
     public class HUD : MonoBehaviour
     {
         [SerializeField] private Transform objectives;
+        [SerializeField] private TMP_Text scoreText;
         [SerializeField] private TMP_Text clock;
         [SerializeField] private TMP_Text moves;
 
@@ -17,11 +18,11 @@ namespace Project.Scripts.UI.HUD
         [Inject] private WinMenu.Factory winFactory;
         [Inject] private Objective.Factory factory;
         [Inject] private LevelSetting levelSetting;
+        [Inject] private ScoreManager scoreManager;
         [Inject] private SignalBus signalBus;
 
         private Dictionary<Type, bool> objs;
-        private int remainingMoves;
-        private int score;
+        private int remainingMoves, score;
         private Timer timer;
 
         private void Start()
@@ -42,6 +43,13 @@ namespace Project.Scripts.UI.HUD
         {
             signalBus.Subscribe<Signals.OnObjectiveComplete>(ObjectiveComplete);
             signalBus.Subscribe<Signals.OnMove>(OnGemSwap);
+            signalBus.Subscribe<Signals.AddToScore>(AddToScore);
+        }
+
+        private void AddToScore(Signals.AddToScore signal)
+        {
+            score += signal.score;
+            scoreText.text = score.ToString();
         }
 
         private void OnGemSwap()
@@ -67,7 +75,12 @@ namespace Project.Scripts.UI.HUD
 
         private void ShowWinScreen()
         {
-            winFactory.Create(score).transform.SetParent(transform.parent,false);
+            winFactory.Create(new WinDetails
+            {
+                score = score,
+                remainingMoves = remainingMoves,
+                remainingTime = timer.GetRemainingTime()
+            }).transform.SetParent(transform.parent, false);
         }
 
         private void ShowLoseScreen()
@@ -88,7 +101,7 @@ namespace Project.Scripts.UI.HUD
         private void SetTimer()
         {
             UpdateClock(levelSetting.time);
-            timer = new Timer(levelSetting.time , UpdateClock, OnTimerEnd);
+            timer = new Timer(levelSetting.time, UpdateClock, OnTimerEnd);
             timer.Start();
         }
 

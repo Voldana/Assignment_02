@@ -12,6 +12,7 @@ namespace Project.Scripts.Game
         public int height;
         public int width;
         public int moves;
+        public int level;
         public int time;
     }
 
