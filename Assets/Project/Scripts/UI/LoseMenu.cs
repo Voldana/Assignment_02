@@ -1,22 +1,43 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Zenject;
 
 namespace Project.Scripts.UI
 {
     public class LoseMenu : MonoBehaviour
     {
-        [SerializeField] private TMP_Text reasonText;
+        [SerializeField] private TMP_Text reasonText, scoreText;
         
-        [Inject] private string reason;
-
+        [Inject] private LossDetails lossDetails;
+        
         private void Start()
         {
-            reasonText.text = reason;
+            reasonText.text = lossDetails.reason;
+            scoreText.text += $" {lossDetails.score}";
         }
 
-        public class Factory : PlaceholderFactory<string, LoseMenu>
+        public void OnMainMenu()
+        {
+            Time.timeScale = 1;
+            SceneManager.LoadSceneAsync("Main Menu");
+        }
+
+        public void OnRetry()
+        {
+            Time.timeScale = 1;
+            SceneManager.LoadSceneAsync(lossDetails.level);
+        }
+        
+
+        public class Factory : PlaceholderFactory<LossDetails, LoseMenu>
         {
         }
     }
+        public struct LossDetails
+        {
+            public string reason;
+            public int score;
+            public int level;
+        }
 }

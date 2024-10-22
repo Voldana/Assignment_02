@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using DG.Tweening;
 using Project.Scripts.Game;
 using TMPro;
 using UnityEngine;
@@ -75,16 +76,30 @@ namespace Project.Scripts.UI.HUD
 
         private void ShowWinScreen()
         {
-            winFactory.Create(new WinDetails
+            Time.timeScale = 0;
+            DOVirtual.DelayedCall(1.5f, () =>
             {
-                score = score,
-                remainingMoves = remainingMoves,
-                remainingTime = timer.GetRemainingTime()
-            }).transform.SetParent(transform.parent, false);
+                winFactory.Create(new WinDetails
+                {
+                    score = score,
+                    remainingMoves = remainingMoves,
+                    remainingTime = timer.GetRemainingTime()
+                }).transform.SetParent(transform.parent, false);
+            });
         }
 
         private void ShowLoseScreen()
         {
+            Time.timeScale = 0;
+            DOVirtual.DelayedCall(1.5f, () =>
+            {
+                loseFactory.Create(new LossDetails()
+                {
+                    score = score,
+                    reason = "",
+                    level = levelSetting.level
+                }).transform.SetParent(transform.parent, false);
+            });
         }
 
         private void SetRemainingMoves()
