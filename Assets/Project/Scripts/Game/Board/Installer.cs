@@ -9,7 +9,7 @@ namespace Project.Scripts.Game.Board
 
         public override void InstallBindings()
         {
-            Container.BindFactory<GemType ,Gem, Gem.Factory>().FromComponentInNewPrefab(gem).AsSingle();
+            Container.BindFactory<GemType, Vector2Int,Gem, Gem.Factory>().FromComponentInNewPrefab(gem).AsSingle();
         }
     }
 }

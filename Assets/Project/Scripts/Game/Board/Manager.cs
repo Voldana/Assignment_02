@@ -14,6 +14,7 @@ namespace Project.Scripts.Game.Board
         [Inject] private AudioManager audioManager;
         [Inject] private Gem.Factory factory;
         [Inject] private SignalBus signalBus;
+        [Inject] private Spawner spawner;
 
         private readonly Vector3 originPosition = new(-.5f, -1.3f, 0);
         private const Ease Ease = DG.Tweening.Ease.InQuad;
@@ -26,7 +27,6 @@ namespace Project.Scripts.Game.Board
         private Grid<GridObject<Gem>> grid;
 
         private Vector2Int selectedGem = Vector2Int.one * -1;
-        private bool subscribed = false;
 
         void Awake()
         {
@@ -48,7 +48,6 @@ namespace Project.Scripts.Game.Board
         private void OnSelectGem()
         {
             var gridPos = grid.GetXY(Camera.main.ScreenToWorldPoint(inputReader.Selected));
-
             if (!IsValidPosition(gridPos) || IsEmptyPosition(gridPos)) return;
 
             if (selectedGem == gridPos)
@@ -67,12 +66,10 @@ namespace Project.Scripts.Game.Board
             }
         }
 
-        IEnumerator RunGameLoop(Vector2Int gridPosA, Vector2Int gridPosB)
+        private IEnumerator RunGameLoop(Vector2Int gridPosA, Vector2Int gridPosB)
         {
             yield return StartCoroutine(SwapGems(gridPosA, gridPosB));
             yield return CheckMatches(false);
-            // TODO: Check if game is over
-
             DeselectGem();
         }
 
@@ -153,7 +150,8 @@ namespace Project.Scripts.Game.Board
                 for (var y = 0; y < levelSetting.height; y++)
                 {
                     if (grid.GetValue(x, y) != null) continue;
-                    var type = levelSetting.gems[Random.Range(0, levelSetting.gems.Count)];
+                    // var type = levelSetting.gems[Random.Range(0, levelSetting.gems.Count)];
+                    var type = spawner.UniformDistributionSpawner(grid, x, y);
                     CreateGem(x, y, type);
                     yield return new WaitForSeconds(0.05f);
                 }
@@ -320,7 +318,7 @@ namespace Project.Scripts.Game.Board
 
         private void CreateGem(int x, int y, GemType type)
         {
-            var gem = factory.Create(type);
+            var gem = factory.Create(type, new Vector2Int(x,y));
             gem.transform.position = grid.GetWorldPositionCenter(x, y);
             gem.transform.SetParent(transform);
             gem.transform.rotation = quaternion.identity;
@@ -329,8 +327,18 @@ namespace Project.Scripts.Game.Board
             grid.SetValue(x, y, gridObject);
         }
 
-        private void DeselectGem() => selectedGem = new Vector2Int(-1, -1);
-        private void SelectGem(Vector2Int gridPos) => selectedGem = gridPos;
+        private void DeselectGem()
+        {
+            grid.GetValue(selectedGem.x, selectedGem.y).GetValue().SetSelected(false);
+            selectedGem = new Vector2Int(-1, -1);
+        }
+
+        private void SelectGem(Vector2Int gridPos)
+        {
+            signalBus.Fire(new Signals.DeselectAllGems());
+            grid.GetValue(gridPos.x, gridPos.y).GetValue().SetSelected(true);
+            selectedGem = gridPos;
+        }
 
         private bool IsEmptyPosition(Vector2Int gridPosition) => grid.GetValue(gridPosition.x, gridPosition.y) == null;
 

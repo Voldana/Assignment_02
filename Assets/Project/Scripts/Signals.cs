@@ -22,5 +22,9 @@ namespace Project.Scripts
         {
             public Type type;
         }
+
+        public struct DeselectAllGems
+        {
+        }
     }
 }
