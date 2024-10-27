@@ -27,14 +27,11 @@ namespace Project.Scripts.Game.Board
         private Grid<GridObject<Gem>> grid;
 
         private Vector2Int selectedGem = Vector2Int.one * -1;
-
-        void Awake()
-        {
-            inputReader = GetComponent<InputReader>();
-        }
+        
 
         private void Start()
         {
+            inputReader = GetComponent<InputReader>();
             InitializeGrid();
             inputReader.Fire += OnSelectGem;
             DOVirtual.DelayedCall(1.5f, () => { StartCoroutine(CheckMatches(true)); });
@@ -53,17 +50,15 @@ namespace Project.Scripts.Game.Board
             if (selectedGem == gridPos)
             {
                 DeselectGem();
-                // audioManager.PlayDeselect();
             }
             else if (selectedGem == Vector2Int.one * -1)
             {
                 SelectGem(gridPos);
-                // audioManager.PlayClick();
+                audioManager.PlayClick();
             }
             else
-            {
                 StartCoroutine(RunGameLoop(selectedGem, gridPos));
-            }
+            
         }
 
         private IEnumerator RunGameLoop(Vector2Int gridPosA, Vector2Int gridPosB)
@@ -193,7 +188,6 @@ namespace Project.Scripts.Game.Board
                         gem.transform
                             .DOLocalMove(grid.GetWorldPositionCenter(x, y), 0.25f)
                             .SetEase(Ease);
-                        // audioManager.PlayWoosh();
                         yield return new WaitForSeconds(0.05f);
                         break;
                     }
@@ -309,10 +303,11 @@ namespace Project.Scripts.Game.Board
             yield return new WaitForSeconds(0.5f);
         }
 
-        private static void ShakeGems(Gem gemA, Gem gemB)
+        private void ShakeGems(Gem gemA, Gem gemB)
         {
             gemA.transform.DOShakeRotation(0.5f, Vector3.one * 5);
             gemB.transform.DOShakeRotation(0.5f, Vector3.one * 5);
+            audioManager.PlayFailed();
         }
 
         private static bool IsAdjacent(Vector2Int posA, Vector2Int posB)
@@ -346,6 +341,7 @@ namespace Project.Scripts.Game.Board
 
         private void DeselectGem()
         {
+            if(grid.GetValue(selectedGem.x,selectedGem.y) == null) return; 
             grid.GetValue(selectedGem.x, selectedGem.y).GetValue().SetSelected(false);
             selectedGem = new Vector2Int(-1, -1);
         }

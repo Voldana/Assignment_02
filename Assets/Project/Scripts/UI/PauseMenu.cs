@@ -26,7 +26,8 @@ namespace Project.Scripts.UI
 
         public void OnMainMenu()
         {
-            SceneManager.LoadSceneAsync("Main Menu");
+            ChangeTimeScale(true);
+            SceneManager.LoadScene("Main Menu");
         }
         
         public class Factory : PlaceholderFactory<PauseMenu>

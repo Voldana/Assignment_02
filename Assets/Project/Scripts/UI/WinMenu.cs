@@ -16,7 +16,7 @@ namespace Project.Scripts.UI
 
         private void Start()
         {
-            DOTween.KillAll();
+            DOTween.timeScale = 1;
             CalculateScore();
         }
 
@@ -29,10 +29,10 @@ namespace Project.Scripts.UI
             
             switch (final)
             {
-                case > 210:
+                case > 500:
                     ShowStars(2);
                     break;
-                case > 180:
+                case > 300:
                     ShowStars(1);
                     break;
                 default:

@@ -7,7 +7,7 @@ namespace Project.Scripts.UI
     {
         public void OnLevelClick(string levelNumber)
         {
-            SceneManager.LoadSceneAsync(levelNumber);
+            SceneManager.LoadScene(levelNumber);
         }
 
         public void OnExitClick()

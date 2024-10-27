@@ -20,6 +20,7 @@ namespace Project.Scripts.UI.HUD
         [Inject] private Objective.Factory factory;
         [Inject] private LevelSetting levelSetting;
         [Inject] private ScoreManager scoreManager;
+        [Inject] private AudioManager audioManager;
         [Inject] private SignalBus signalBus;
 
         private Dictionary<Type, bool> objs;
@@ -28,6 +29,8 @@ namespace Project.Scripts.UI.HUD
 
         private void Start()
         {
+            Time.timeScale = 1;
+            DOTween.timeScale = 1;
             objs = new Dictionary<Type, bool>
             {
                 { Type.Green, false }, { Type.Purple, false }, { Type.Blue, false }, { Type.Red, false },
@@ -76,9 +79,12 @@ namespace Project.Scripts.UI.HUD
 
         private void ShowWinScreen()
         {
-            Time.timeScale = 0;
+            timer.Stop();
             DOVirtual.DelayedCall(1.5f, () =>
             {
+                Time.timeScale = 0;
+                DOTween.KillAll();
+                audioManager.PlayWin();
                 winFactory.Create(new WinDetails
                 {
                     score = score,
@@ -90,7 +96,9 @@ namespace Project.Scripts.UI.HUD
 
         private void ShowLoseScreen()
         {
+            timer.Stop();
             Time.timeScale = 0;
+            DOTween.KillAll();
             DOVirtual.DelayedCall(1.5f, () =>
             {
                 loseFactory.Create(new LossDetails()
@@ -122,7 +130,7 @@ namespace Project.Scripts.UI.HUD
 
         private void UpdateClock(int newTime)
         {
-            clock.text = $"{newTime / 60}:{newTime % 60}";
+            clock.text = $"{newTime / 60}:{newTime % 60:D2}";
         }
 
         private void OnTimerEnd()
