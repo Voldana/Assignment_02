@@ -17,6 +17,7 @@ namespace Project.Scripts.UI
         private void Start()
         {
             DOTween.timeScale = 1;
+            Time.timeScale = 1;
             CalculateScore();
         }
 
@@ -26,7 +27,7 @@ namespace Project.Scripts.UI
             scoreText.text += winDetails.score;
             remainingTime.text += winDetails.remainingTime;
             remainingMoves.text += winDetails.remainingMoves;
-            
+            finalScore.text += final;
             switch (final)
             {
                 case > 500:

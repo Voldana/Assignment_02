@@ -63,6 +63,7 @@ namespace Project.Scripts.Game.Board
 
         private IEnumerator RunGameLoop(Vector2Int gridPosA, Vector2Int gridPosB)
         {
+            signalBus.Fire(new Signals.GameLoopProgress{state = true});
             yield return StartCoroutine(SwapGems(gridPosA, gridPosB));
             yield return CheckMatches(false);
             DeselectGem();
@@ -83,6 +84,7 @@ namespace Project.Scripts.Game.Board
             if (matches.Count == 0)
             {
                 multiplier = 1;
+                signalBus.Fire(new Signals.GameLoopProgress{state = false});
                 yield break;
             }
 

@@ -19,6 +19,7 @@ namespace Project.Scripts
             Container.Bind<ScoreManager>().AsSingle();
             
             Container.DeclareSignal<Signals.OnObjectiveComplete>();
+            Container.DeclareSignal<Signals.GameLoopProgress>();
             Container.DeclareSignal<Signals.DeselectAllGems>();
             Container.DeclareSignal<Signals.AddToScore>();
             Container.DeclareSignal<Signals.OnMatch>();

@@ -25,6 +25,7 @@ namespace Project.Scripts.UI.HUD
 
         private Dictionary<Type, bool> objs;
         private int remainingMoves, score;
+        private bool inProgress, timeEnded, movesEnded;
         private Timer timer;
 
         private void Start()
@@ -46,8 +47,16 @@ namespace Project.Scripts.UI.HUD
         private void SubscribeSignals()
         {
             signalBus.Subscribe<Signals.OnObjectiveComplete>(ObjectiveComplete);
+            signalBus.Subscribe<Signals.GameLoopProgress>(GameIsInProgress);
             signalBus.Subscribe<Signals.OnMove>(OnGemSwap);
             signalBus.Subscribe<Signals.AddToScore>(AddToScore);
+        }
+
+        private void GameIsInProgress(Signals.GameLoopProgress signal)
+        {
+            inProgress = signal.state;
+            if(!inProgress && (timeEnded || movesEnded))
+                ShowLoseScreen();
         }
 
         private void AddToScore(Signals.AddToScore signal)
@@ -60,7 +69,7 @@ namespace Project.Scripts.UI.HUD
         {
             remainingMoves--;
             if (remainingMoves <= 0)
-                ShowLoseScreen();
+                movesEnded = true;
             SetRemainingMoves();
         }
 
@@ -135,7 +144,10 @@ namespace Project.Scripts.UI.HUD
 
         private void OnTimerEnd()
         {
-            ShowLoseScreen();
+            timeEnded = true;
+            timer.Stop();
+            if(!inProgress)
+                ShowLoseScreen();
         }
     }
 }

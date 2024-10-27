@@ -22,6 +22,11 @@ namespace Project.Scripts
         {
             public Type type;
         }
+        
+        public struct GameLoopProgress
+        {
+            public bool state;
+        }
 
         public struct DeselectAllGems
         {
