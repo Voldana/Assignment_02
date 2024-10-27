@@ -1,5 +1,6 @@
-using System;
+
 using System.Collections.Generic;
+using UnityEngine;
 using Zenject;
 
 namespace Project.Scripts.Game.Board
@@ -13,6 +14,7 @@ namespace Project.Scripts.Game.Board
         {
             levelSetting = settings;
         }
+
         public GemType UniformDistributionSpawner(Grid<GridObject<Gem>> grid, int x, int y)
         {
             // Step 1: Define all gem colors and initialize counts
@@ -21,26 +23,21 @@ namespace Project.Scripts.Game.Board
 
             foreach (var gemType in availableGemTypes)
                 neighborCounts[gemType] = 0; // Initialize neighbor counts for each gem type
-            
+
 
             // Step 2: Check the 8 neighbors around (x, y)
             for (var i = -1; i <= 1; i++)
             {
                 for (var j = -1; j <= 1; j++)
                 {
-                    // Skip the center position (x, y itself)
                     if (i == 0 && j == 0) continue;
-
                     var neighborX = x + i;
                     var neighborY = y + j;
-
-                    // Make sure the neighbor is within bounds
-                    if (neighborX < 0 || neighborX >= levelSetting.width || neighborY < 0 ||
-                        neighborY >= levelSetting.height) continue;
+                    if (!IsValid(neighborX, neighborY)) continue;
                     var neighborGem = grid.GetValue(neighborX, neighborY)?.GetValue();
                     if (neighborGem == null) continue;
                     var gemType = neighborGem.GetGemType();
-                    neighborCounts[gemType]++; // Count the gem type in the neighborhood
+                    neighborCounts[gemType]++;
                 }
             }
 
@@ -63,7 +60,7 @@ namespace Project.Scripts.Game.Board
             }
 
             // Step 5: Randomly select a gem based on the calculated probabilities
-            var randomValue = UnityEngine.Random.Range(0f,1f); // Generates a random float between 0 and 1
+            var randomValue = Random.Range(0f, 1f); // Generates a random float between 0 and 1
             var cumulativeProbability = 0f;
 
             foreach (var gemType in availableGemTypes)
@@ -76,7 +73,46 @@ namespace Project.Scripts.Game.Board
             }
 
             // Fallback (should never hit this if the probabilities are correctly calculated)
-            return availableGemTypes[UnityEngine.Random.Range(0, availableGemTypes.Count)];
+            return availableGemTypes[Random.Range(0, availableGemTypes.Count)];
+        }
+        
+        public GemType NormalDistributionSpawner(Grid<GridObject<Gem>> grid, int x, int y, bool isFirstTile)
+        {
+            // Step 1: Define all gem colors and set default probability for each
+            var availableGemTypes = levelSetting.gems;
+    
+            // Step 2: If tile is at the bottom row, choose color randomly with equal probability
+            if (y == 0)
+                return availableGemTypes[Random.Range(0, availableGemTypes.Count)];
+            
+
+            // Step 3: Get the color of the tile directly below if it exists
+            var belowTile = grid.GetValue(x, y - 1)?.GetValue();
+            var belowColor = belowTile?.GetGemType() ?? availableGemTypes[Random.Range(0, availableGemTypes.Count)];
+
+            // Step 4: Set probability based on position (first tile or subsequent tiles)
+            var matchProbability = isFirstTile ? 0.4f : 0.6f;
+
+            // Step 5: Generate the tile color with probability matching the tile below
+            if (Random.value < matchProbability)
+            {
+                return belowColor; // Match the color of the tile below
+            }
+
+            // Randomly select a different color if not matching
+            GemType newColor;
+            do
+            {
+                newColor = availableGemTypes[Random.Range(0, availableGemTypes.Count)];
+            } while (newColor == belowColor);
+
+            return newColor;
+        }
+
+        private bool IsValid(int neighborX, int neighborY)
+        {
+            return neighborX >= 0 && neighborX < levelSetting.width && neighborY >= 0 &&
+                   neighborY < levelSetting.height;
         }
     }
 }

@@ -123,7 +123,7 @@ namespace Project.Scripts.Game.Board
 
                 if (gem.y < 7)
                     neighborTypes.Add(grid.GetValue(gem.x, gem.y + 1).GetValue().GetGemType());
-                
+
                 grid.SetValue(gem.x, gem.y, null);
                 Destroy(cell.gameObject);
                 GemType newGemType;
@@ -143,19 +143,37 @@ namespace Project.Scripts.Game.Board
                 signalBus.Fire(new Signals.OnMatch { type = match.gemType.type });
         }
 
+        private bool isFirst = true;
+        private bool isTileAboveEmpty = false;
+        private GemType type;
+
         private IEnumerator FillEmptySpots()
         {
-            for (var x = 0; x < levelSetting.width; x++)
+            for (var y = 0; y < levelSetting.height; y++)
             {
-                for (var y = 0; y < levelSetting.height; y++)
+                isFirst = true;
+                for (var x = 0; x < levelSetting.width; x++)
                 {
-                    if (grid.GetValue(x, y) != null) continue;
-                    // var type = levelSetting.gems[Random.Range(0, levelSetting.gems.Count)];
-                    var type = spawner.UniformDistributionSpawner(grid, x, y);
+                    if (grid.GetValue(x, y) != null)
+                    {
+                        isFirst = true;
+                        continue;
+                    }
+
+                    IsTileAboveEmpty(x, y);
+                    type = levelSetting.level.Equals(2)
+                        ? spawner.UniformDistributionSpawner(grid, x, y)
+                        : spawner.NormalDistributionSpawner(grid, x, y, isFirst && isTileAboveEmpty);
+
                     CreateGem(x, y, type);
                     yield return new WaitForSeconds(0.05f);
                 }
             }
+        }
+
+        private void IsTileAboveEmpty(int x, int y)
+        {
+            isTileAboveEmpty =  grid.GetValue(x, y) == null;
         }
 
         private IEnumerator MakeGemsFall()
@@ -212,7 +230,6 @@ namespace Project.Scripts.Game.Board
         {
             List<GemMatch> matchesWithGemType = new();
 
-            // Horizontal Match Finder
             for (var y = 0; y < levelSetting.height; y++)
             {
                 for (var x = 0; x < levelSetting.width - 2; x++)
@@ -239,7 +256,7 @@ namespace Project.Scripts.Game.Board
                 }
             }
 
-            // Vertical Match Finder
+
             for (var x = 0; x < levelSetting.width; x++)
             {
                 for (var y = 0; y < levelSetting.height - 2; y++)
@@ -251,7 +268,7 @@ namespace Project.Scripts.Game.Board
                     List<Vector2Int> currentMatch = new() { new Vector2Int(x, y) };
 
                     // Check if there are more matching gems vertically
-                    for (int i = y + 1; i < levelSetting.height; i++)
+                    for (var i = y + 1; i < levelSetting.height; i++)
                     {
                         var nextGem = grid.GetValue(x, i);
                         if (nextGem == null || nextGem.GetValue().GetGemType() != gemType) break;
@@ -292,7 +309,7 @@ namespace Project.Scripts.Game.Board
             yield return new WaitForSeconds(0.5f);
         }
 
-        private void ShakeGems(Gem gemA, Gem gemB)
+        private static void ShakeGems(Gem gemA, Gem gemB)
         {
             gemA.transform.DOShakeRotation(0.5f, Vector3.one * 5);
             gemB.transform.DOShakeRotation(0.5f, Vector3.one * 5);
@@ -318,7 +335,7 @@ namespace Project.Scripts.Game.Board
 
         private void CreateGem(int x, int y, GemType type)
         {
-            var gem = factory.Create(type, new Vector2Int(x,y));
+            var gem = factory.Create(type, new Vector2Int(x, y));
             gem.transform.position = grid.GetWorldPositionCenter(x, y);
             gem.transform.SetParent(transform);
             gem.transform.rotation = quaternion.identity;
@@ -335,6 +352,7 @@ namespace Project.Scripts.Game.Board
 
         private void SelectGem(Vector2Int gridPos)
         {
+            Debug.Log(gridPos);
             signalBus.Fire(new Signals.DeselectAllGems());
             grid.GetValue(gridPos.x, gridPos.y).GetValue().SetSelected(true);
             selectedGem = gridPos;
@@ -351,8 +369,8 @@ namespace Project.Scripts.Game.Board
 
     internal struct GemMatch
     {
-        public List<Vector2Int> coordinates;
-        public GemType gemType;
+        public readonly List<Vector2Int> coordinates;
+        public readonly GemType gemType;
 
         public GemMatch(List<Vector2Int> coordinates, GemType gemType)
         {
