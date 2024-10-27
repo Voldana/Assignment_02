@@ -16,6 +16,7 @@ namespace Project.Scripts.UI
 
         private void Start()
         {
+            DOTween.KillAll();
             CalculateScore();
         }
 

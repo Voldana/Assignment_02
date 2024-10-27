@@ -352,7 +352,6 @@ namespace Project.Scripts.Game.Board
 
         private void SelectGem(Vector2Int gridPos)
         {
-            Debug.Log(gridPos);
             signalBus.Fire(new Signals.DeselectAllGems());
             grid.GetValue(gridPos.x, gridPos.y).GetValue().SetSelected(true);
             selectedGem = gridPos;

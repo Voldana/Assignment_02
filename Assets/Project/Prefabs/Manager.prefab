@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 3159689716574923086}
   - component: {fileID: 1388891593981105816}
   m_Layer: 0
-  m_Name: Match3
+  m_Name: Manager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -47,17 +47,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb09d807af3e460881105e5ea11af17d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cellSize: 1
-  originPosition: {x: 0, y: 0, z: 0}
-  debug: 1
-  gemPrefab: {fileID: 7206205297983799483, guid: 428f2daeefa3c364db1d6ef9a07d4e9e, type: 3}
-  gemTypes:
-  - {fileID: 11400000, guid: 08fe6140dd4afff44916b2086e7d10c5, type: 2}
-  - {fileID: 11400000, guid: f3cf544190d9fb04ca2e1cce450d6165, type: 2}
-  - {fileID: 11400000, guid: 0ee4c510fe1934d4db2268772859c5e9, type: 2}
-  - {fileID: 11400000, guid: 553bd544b05ac174286f6648e6b62330, type: 2}
-  ease: 5
-  explosion: {fileID: 129898, guid: 36bdc02b23d9ca94d93bd715c0cca5c0, type: 3}
+  explosion: {fileID: 2708598583397607911, guid: 6398d43fe79ea0140913dc5530c646af, type: 3}
 --- !u!114 &5594979737203444720
 MonoBehaviour:
   m_ObjectHideFlags: 0

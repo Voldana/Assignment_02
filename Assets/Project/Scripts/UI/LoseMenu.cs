@@ -1,3 +1,4 @@
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -13,6 +14,7 @@ namespace Project.Scripts.UI
         
         private void Start()
         {
+            DOTween.KillAll();
             reasonText.text = lossDetails.reason;
             scoreText.text += $" {lossDetails.score}";
         }
