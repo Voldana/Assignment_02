@@ -24,16 +24,16 @@ namespace Project.Scripts.UI
         private void CalculateScore()
         {
             var final = winDetails.score + winDetails.remainingTime * 5 + winDetails.remainingMoves * 10;
-            scoreText.text += winDetails.score;
-            remainingTime.text += winDetails.remainingTime;
             remainingMoves.text += winDetails.remainingMoves;
+            remainingTime.text += winDetails.remainingTime;
+            scoreText.text += winDetails.score;
             finalScore.text += final;
             switch (final)
             {
-                case > 500:
+                case > 1000:
                     ShowStars(2);
                     break;
-                case > 300:
+                case > 700:
                     ShowStars(1);
                     break;
                 default:

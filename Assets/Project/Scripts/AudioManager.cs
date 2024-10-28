@@ -5,19 +5,19 @@ namespace Project.Scripts
     public class AudioManager : MonoBehaviour
     {
         [SerializeField] private AudioSource audioSource;
-        [SerializeField] private AudioClip click;
-        [SerializeField] private AudioClip win;
-        [SerializeField] private AudioClip lose;
-        [SerializeField] private AudioClip pop;
         [SerializeField] private AudioClip failed;
+        [SerializeField] private AudioClip click;
+        [SerializeField] private AudioClip lose;
+        [SerializeField] private AudioClip win;
+        [SerializeField] private AudioClip pop;
 
 
         public void PlayClick() => audioSource.PlayOneShot(click);
-        public void PlayWin() => audioSource.PlayOneShot(win);
         public void PlayLose() => audioSource.PlayOneShot(lose);
+        public void PlayWin() => audioSource.PlayOneShot(win);
+        public void PlayFailed() => PlayRandomPitch(failed);
         public void PlayPop() => PlayRandomPitch(pop);
 
-        public void PlayFailed() => PlayRandomPitch(failed);
 
         private void PlayRandomPitch(AudioClip audioClip)
         {

@@ -99,7 +99,7 @@ namespace Project.Scripts.Game.Board
 
         private void CalculateScore(int matches)
         {
-            signalBus.Fire(new Signals.AddToScore { score = matches * multiplier * 10 });
+            signalBus.Fire(new Signals.AddToScore { score = matches * multiplier * 15 });
         }
 
         private void ReplaceGems(GemMatch match)
@@ -175,7 +175,6 @@ namespace Project.Scripts.Game.Board
 
         private IEnumerator MakeGemsFall()
         {
-            // TODO: Make this more efficient
             for (var x = 0; x < levelSetting.width; x++)
             {
                 for (var y = 0; y < levelSetting.height; y++)
@@ -263,19 +262,16 @@ namespace Project.Scripts.Game.Board
                     var gemType = gemA.GetValue().GetGemType();
                     List<Vector2Int> currentMatch = new() { new Vector2Int(x, y) };
 
-                    // Check if there are more matching gems vertically
                     for (var i = y + 1; i < levelSetting.height; i++)
                     {
                         var nextGem = grid.GetValue(x, i);
                         if (nextGem == null || nextGem.GetValue().GetGemType() != gemType) break;
-
                         currentMatch.Add(new Vector2Int(x, i));
                     }
 
-                    // If the match has 3 or more gems, add it as a valid match
                     if (currentMatch.Count < 3) continue;
                     matchesWithGemType.Add(new GemMatch(currentMatch, gemType));
-                    y += currentMatch.Count - 1; // Skip over the matched gems in the vertical direction
+                    y += currentMatch.Count - 1; 
                 }
             }
 
@@ -325,8 +321,8 @@ namespace Project.Scripts.Game.Board
             for (var x = 0; x < levelSetting.width; x++)
             for (var y = 0; y < levelSetting.height; y++)
             {
-                var type = levelSetting.gems[Random.Range(0, levelSetting.gems.Count)];
-                CreateGem(x, y, type);
+                var random = levelSetting.gems[Random.Range(0, levelSetting.gems.Count)];
+                CreateGem(x, y, random);
             }
         }
 
@@ -336,7 +332,7 @@ namespace Project.Scripts.Game.Board
             gem.transform.position = grid.GetWorldPositionCenter(x, y);
             gem.transform.SetParent(transform);
             gem.transform.rotation = quaternion.identity;
-            var gridObject = new GridObject<Gem>(grid, x, y);
+            var gridObject = new GridObject<Gem>();
             gridObject.SetValue(gem);
             grid.SetValue(x, y, gridObject);
         }

@@ -2,23 +2,13 @@
 {
     public class GridObject<T>
     {
-        private Grid<GridObject<T>> grid;
-        private int x;
-        private int y;
-        private T gem;
+        private Gem gem;
 
-        public GridObject(Grid<GridObject<T>> grid, int x, int y)
-        {
-            this.grid = grid;
-            this.x = x;
-            this.y = y;
-        }
-
-        public void SetValue(T gem)
+        public void SetValue(Gem gem)
         {
             this.gem = gem;
         }
 
-        public T GetValue() => gem;
+        public Gem GetValue() => gem;
     }
 }

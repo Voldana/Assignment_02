@@ -25,6 +25,6 @@ MonoBehaviour:
     type: 4
   height: 8
   width: 8
-  moves: 10
+  moves: 15
   level: 1
   time: 90
