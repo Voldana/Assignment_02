@@ -68,6 +68,7 @@ namespace Project.Scripts.UI.HUD
         private void OnGemSwap()
         {
             remainingMoves--;
+            if (remainingMoves < 0) remainingMoves = 0;
             if (remainingMoves <= 0)
                 movesEnded = true;
             SetRemainingMoves();

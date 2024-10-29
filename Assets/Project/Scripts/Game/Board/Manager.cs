@@ -247,7 +247,7 @@ namespace Project.Scripts.Game.Board
                     // If the match has 3 or more gems, add it as a valid match
                     if (currentMatch.Count < 3) continue;
                     matchesWithGemType.Add(new GemMatch(currentMatch, gemType));
-                    x += currentMatch.Count - 1; // Skip over the matched gems in the horizontal direction
+                    x += currentMatch.Count - 1;
                 }
             }
 
